@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Talk2Data 💬📊</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    :root {
+      --dark: #071739;
+      --blue: #4B6382;
+      --gray: #A4B5C4;
+      --light: #CDD5DB;
+      --bronze: #A68868;
+      --gold: #E3C39D;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--dark), var(--blue));
+      color: var(--light);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 2.2rem;
+      background: linear-gradient(90deg, var(--gold), var(--bronze));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(227,195,157,0.3);
+      margin-bottom: 10px;
+    }
+    #chatbox {
+      width: 90%;
+      max-width: 700px;
+      height: 420px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(227,195,157,0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      box-shadow: 0 0 25px rgba(166,136,104,0.15);
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .msg {
+      margin: 10px 0;
+      padding: 12px 16px;
+      border-radius: 12px;
+      max-width: 85%;
+      line-height: 1.4;
+      animation: fadein 0.4s ease;
+    }
+    @keyframes fadein { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+    .user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--light), var(--gray));
+      color: #000;
+    }
+    .bot {
+      align-self: flex-start;
+      background: linear-gradient(135deg, var(--bronze), var(--gold));
+      color: #000;
+    }
+    #inputArea {
+      margin-top: 14px;
+      display: flex;
+      width: 90%;
+      max-width: 700px;
+    }
+    #question {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+      background: rgba(255,255,255,0.1);
+      color: var(--light);
+    }
+    button {
+      margin-left: 10px;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--bronze), var(--gold));
+      color: #071739;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 10px rgba(227,195,157,0.3);
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(227,195,157,0.5);
+    }
+    footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 0.9rem;
+      color: var(--gray);
+      text-align: center;
+    }
+    #loading {
+      font-style: italic;
+      opacity: 0.8;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:.4;} 50%{opacity:1;} }
+  </style>
+</head>
+<body>
+  <h1>⚡ Talk2Data</h1>
+  <div id="chatbox"></div>
+
+  <div id="inputArea">
+    <input id="question" type="text" placeholder="Ask something about your data...">
+    <button onclick="askQuestion()">Ask</button>
+  </div>
+
+  <footer>Made with ⚡ by <b>Srija Chinthakunta</b></footer>
+
+  <script>
+    async function askQuestion() {
+      const q = document.getElementById('question').value.trim();
+      if (!q) return;
+      const chatbox = document.getElementById('chatbox');
+      chatbox.innerHTML += `<div class='msg user'><b>You:</b> ${q}</div>`;
+      document.getElementById('question').value = '';
+
+      const loading = document.createElement('div');
+      loading.id = 'loading';
+      loading.className = 'msg bot';
+      loading.textContent = 'Bot is thinking...';
+      chatbox.appendChild(loading);
+      chatbox.scrollTop = chatbox.scrollHeight;
+
+      try {
+        const res = await fetch('http://127.0.0.1:8000/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: q })
+        });
+        const data = await res.json();
+        chatbox.removeChild(loading);
+        chatbox.innerHTML += `<div class='msg bot'><b>Bot:</b> ${data.answer}</div>`;
+      } catch (err) {
+        chatbox.removeChild(loading);
+        chatbox.innerHTML += `<div class='msg bot'><b>Bot:</b> Something went wrong 😢</div>`;
+      }
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
