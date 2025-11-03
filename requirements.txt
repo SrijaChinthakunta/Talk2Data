@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pandas
+numpy
+python-dotenv
+langchain    # optional but useful later
+chromadb     # or faiss-cpu if you prefer
+openai       # if you use OpenAI embeddings/LLM
+requests
