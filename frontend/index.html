@@ -143,7 +143,7 @@
       chatbox.scrollTop = chatbox.scrollHeight;
 
       try {
-        const res = await fetch('http://127.0.0.1:8000/ask', {
+        const res = await fetch('https://talk2data.onrender.com/ask', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ question: q })
@@ -160,3 +160,4 @@
   </script>
 </body>
 </html>
+
