@@ -11,7 +11,7 @@ app = FastAPI()
 # ✅ Allow frontend to access backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can restrict to specific origins like ["http://127.0.0.1:5500"]
+    allow_origins=["https://6953a8eeff4b40d201044abb--thriving-cannoli-950487.netlify.app"],  # Your Netlify URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,3 +42,4 @@ class QueryRequest(BaseModel):
 def ask_question(request: QueryRequest):
     answer = ask_data(request.question)
     return {"question": request.question, "answer": answer}
+
